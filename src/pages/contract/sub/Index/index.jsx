@@ -193,8 +193,9 @@ class Sub extends Component{
                 taskName:imcTaskDetail.taskName,
                 userId:this.state.id,
                 imcAddInspectionItemDtoList:[{
-                    description:imcItemDetail.description,
-                    itemName:imcItemDetail.itemName,
+                    description:imcTaskDetail.inspectionContent,
+                    itemName:imcItemDetail.name,
+                    location:imcItemDetail.itemName
                 }]
                 // imcAddInspectionTaskDto:{
                     
@@ -214,6 +215,7 @@ class Sub extends Component{
             .then((res) => {
                 if(res && res.status === 200){     
                     console.log("巡检任务发起成功：" + JSON.stringify(res.data.result))
+                    alert("巡检任务发起成功！")
                 }
             })
             .catch(function (error) {

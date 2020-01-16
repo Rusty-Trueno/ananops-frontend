@@ -6,11 +6,15 @@ import moment from "moment";
 
 const token = window.localStorage.getItem('token')
 
+
 class WorkOrder extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            loginAfter: window.localStorage.getItem('loginAfter'),
             workOrderDetail: {},
+            projectList:[],
+
         }
 
     }
@@ -19,6 +23,31 @@ class WorkOrder extends Component {
         const {
             match: {params: {id}}
         } = this.props
+
+    }
+
+    getProjectListByGroupId() {
+        const groupId = JSON.parse(this.state.loginAfter).loginAuthDto.groupId
+        axios({
+            method: 'POST',
+            url: '/pmc/project/getProjectListByGroupId/'+groupId,
+            headers: {
+                'Content-Type': 'application/json',
+                'deviceId': this.deviceId,
+                'Authorization': 'Bearer ' + token,
+            },
+        })
+            .then((res) => {
+                if (res && res.status === 200) {
+                    this.setState({
+                        projectList: res.data.result,
+                    }) ;
+                }
+                console.log(res.data.result)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
     }
 

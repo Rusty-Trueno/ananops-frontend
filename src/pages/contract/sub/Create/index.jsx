@@ -263,16 +263,16 @@ class SubNew extends Component{
                     </Form.Item>
                     <Form.Item
                     {...createFormItemLayout}
-                    label="描述"
+                    label="巡检内容"
                     >
                     {getFieldDecorator('description',{
-                        initialValue: subId && inspectionDetail.description,
+                        initialValue: subId && inspectionDetail.description || imcTaskDetail.inspectionContent,
                         rules:[{
                         required:false,
-                        message:"请输入描述",
+                        message:"请输入巡检内容",
                         }]
                     })(
-                        <Input.TextArea autoSize={{minRows: 4, maxRows: 6 }} placeholder="请输入描述" />
+                        <Input.TextArea autoSize={{minRows: 4, maxRows: 6 }} placeholder="请输入巡检内容" />
                     )}  
                     </Form.Item>
                     <section className="operator-container">

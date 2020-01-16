@@ -1,26 +1,23 @@
 import React, {Component,} from 'react';
 import {Button, Row, Col, Table, Input, Popconfirm, message, Card, Statistic, Progress, Icon} from 'antd';
 import {Link} from 'react-router-dom'
-import moment from 'moment';
 import axios from 'axios'
 
 const FIRST_PAGE = 0;
 const PAGE_SIZE = 10;
 const Search = Input.Search;
 
-class Process extends Component {
+class Report extends Component {
     constructor(props) {
         super(props)
         this.state = {
             token: window.localStorage.getItem('token'),
-            loginAfter: window.localStorage.getItem('loginAfter'),
-            role: window.localStorage.getItem('role'),
             current: FIRST_PAGE,
-            roleCode: window.localStorage.getItem('roleCode'),
             data: [],
             alarmCount: null,
             processedCount: null,
             urgencyCount: null,
+            dealingCount: null,
             dealRate: null,
             failureRate: null,
         }
@@ -86,7 +83,6 @@ class Process extends Component {
                 console.log(error);
             });
     }
-
     //获取急需处理告警数
     getUrgencyCount = () => {
         axios({
@@ -180,6 +176,7 @@ class Process extends Component {
             });
     }
 
+
     render() {
         const {
             data,
@@ -189,92 +186,122 @@ class Process extends Component {
             dealingCount,
         } = this.state;
         const columns = [
-            {
-                title: '等级',
-                key: 'alarmLevel',
-                render: (text, record) => {
-                    return (record.alarmLevel === 1 ? '紧急' : (record.alarmLevel === 2 ? '可疑' : '提醒'))
+                {
+                    title: '等级',
+                    dataIndex: 'alarmLevel',
+                    key: 'alarmLevel',
+                    filters: [
+                        {
+                            text: '紧急',
+                            value: 1,
+                        },
+                        {
+                            text: '可疑',
+                            value: 2,
+                        },
+                        {
+                            text: '提醒',
+                            value: 3,
+                        },
+                    ],
+                    render:
+                        (text, record) => {
+                            return (record.alarmLevel === 1 ? '紧急' : (record.alarmLevel === 2 ? '可疑' : '提醒'))
+
+                        }
+                },
+                {
+                    title: '告警名称',
+                    key:
+                        'alarmName',
+                    render:
+                        (text, record) => {
+                            return (record.alarmName && record.alarmName) || '--'
+                        }
+                }
+                ,
+                {
+                    title: '受影响设备',
+                    key:
+                        'alarmAsset',
+                    render:
+                        (text, record) => {
+                            return (record.alarmAsset && record.alarmAsset) || '--'
+                        }
 
                 }
-            },
-            {
-                title: '告警名称',
-                key: 'alarmName',
-                render: (text, record) => {
-                    return (record.alarmName && record.alarmName) || '--'
+                ,
+                {
+                    title: '最新发生时间',
+                    key:
+                        'lastOccurTime',
+                    render:
+                        (text, record) => {
+                            return (record.lastOccurTime && record.lastOccurTime) || '--'
+                        }
                 }
-            },
-            {
-                title: '受影响设备',
-                key: 'alarmAsset',
-                render: (text, record) => {
-                    return (record.alarmAsset && record.alarmAsset) || '--'
+                ,
+                {
+                    title: '描述',
+                    key:
+                        'description',
+                    render:
+                        (text, record) => {
+                            return (record.description && record.description) || '--'
+                        }
                 }
+                ,
+                {
+                    title: '状态',
+                    key:
+                        'alarmStatus',
+                    render:
+                        (text, record) => {
+                            if (record.alarmStatus === 1) {
+                                return "未处理";
+                            } else {
+                                return "已处理";
+                            }
+                        }
 
-            },
-            {
-                title: '最新发生时间',
-                key: 'lastOccurTime',
-                render: (text, record) => {
-                    return (record.lastOccurTime && record.lastOccurTime) || '--'
                 }
-            },
-            {
-                title: '描述',
-                key: 'description',
-                render: (text, record) => {
-                    return (record.description && record.description) || '--'
+                ,
+                {
+                    title: '操作',
+                    key:
+                        'action',
+                    render:
+                        (text, record) => (
+                            <div className="operate-btns"
+                                 style={{display: 'block'}}
+                            >
+                                <Link
+                                    to={`/cbd/amc/alarm/detail/${record.id}`}
+                                    style={{marginRight: '12px'}}
+                                >详情</Link>
+                                <Link
+                                    to={`/cbd/amc/alarm/modify/${record.id}`}
+                                    style={{marginRight: '12px'}}
+                                >修改</Link>
+                                <Popconfirm
+                                    title="确定要删除吗？"
+                                    onConfirm={() => {
+                                        this.deleteAlarmByAlarmId(record)
+                                    }}
+                                >
+                                    <Button
+                                        type="simple"
+                                        style={{border: 'none', padding: 0, color: "#357aff", background: 'transparent'}}
+                                    >删除</Button>
+                                </Popconfirm>
+
+                            </div>
+                        ),
+
                 }
-            },
-            {
-                title: '状态',
-                key: 'alarmStatus',
-                render: (text, record) => {
-                    if (record.alarmStatus === 1) {
-                        return "未处理";
-                    } else {
-                        return "已处理";
-                    }
-                }
-
-            },
-            {
-                title: '操作',
-                key: 'action',
-                render: (text, record) => (
-                    <div className="operate-btns"
-                         style={{display: 'block'}}
-                    >
-                        <Link
-                            to={`/cbd/amc/alarm/detail/${record.id}`}
-                            style={{marginRight: '12px'}}
-                        >详情</Link>
-                        <Link
-                            to={{
-                                pathname:`/cbd/amc/alarm/workOrder/`,
-                                query:{
-                                    alarmId:record.id,
-                                    alarmLevel:record.alarmLevel},
-                            }}
-                            style={{marginRight: '12px'}}
-                        >发起工单</Link>
-                        <Popconfirm
-                            title="确定要删除吗？"
-                            onConfirm={() => {
-                                this.deleteAlarmByAlarmId(record)
-                            }}
-                        >
-                            <Button
-                                type="simple"
-                                style={{border: 'none', padding: 0, color: "#357aff", background: 'transparent'}}
-                            >删除</Button>
-                        </Popconfirm>
-
-                    </div>
-                ),
-
-            },
-        ];
+                ,
+            ]
+        ;
         return (
             <div>
                 <div>
@@ -313,11 +340,16 @@ class Process extends Component {
                     </Row>
                 </div>
                 <div>
-                    <Table dataSource={data} columns={columns}/>
+                    <Link to={`/cbd/amc/alarm/create/`}>
+                        <Button type="danger"> +发起报警</Button>
+                    </Link>
+                </div>
+                <div>
+                    <Table dataSource={data} columns={columns} />
                 </div>
             </div>
         )
     }
 }
 
-export default Process;
+export default Report;

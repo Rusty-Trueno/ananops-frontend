@@ -50,6 +50,7 @@ class InspectionDetail extends Component{
         match : { params : { projectId } }
       } = this.props
       const {inspectionDetail}=this.state
+      console.log(JSON.stringify(inspectionDetail))
         return(
             <div className="bg">
             <Descriptions bordered className="descriptions">

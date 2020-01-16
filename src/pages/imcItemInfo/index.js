@@ -38,6 +38,16 @@ class imcItemInfo extends Component{
             loading: Loading
           })}
         />
+        <Route 
+          exact   
+          path="/cbd/imcItemInfo/detail/:taskId/:itemId"
+          component={Loadable({
+            loader: () => import(
+              /* webpackChunkName: "EntranceWork" */
+              './Detail/index'),
+            loading: Loading
+          })}
+        />
       </Switch>
     );
   }

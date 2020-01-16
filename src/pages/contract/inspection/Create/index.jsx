@@ -109,6 +109,9 @@ class InspectionNew extends Component{
         if(!getFieldValue('cycleTime')){
           message.error('请输入巡检周期')
         }
+        if(!getFieldValue('scheduledFinishTime')){
+          message.error('请输入巡检持续时间')
+        }
         if(!getFieldValue('inspectionContent')){
           message.error('请输入巡检内容')
         }
@@ -348,6 +351,20 @@ class InspectionNew extends Component{
                         }]
                     })(
                         <Input placeholder="请输入巡检周期" />
+                    )}  
+                    </Form.Item>
+                    <Form.Item
+                    {...createFormItemLayout}
+                    label="巡检持续时间（天）"
+                    >
+                    {getFieldDecorator('scheduledFinishTime',{
+                        initialValue: id && inspectionDetail.scheduledFinishTime,
+                        rules:[{
+                        required:true,
+                        message:"请输入巡检的持续时间（天）",
+                        }]
+                    })(
+                        <Input placeholder="请输入巡检的持续时间（天）" />
                     )}  
                     </Form.Item>
                     <Form.Item

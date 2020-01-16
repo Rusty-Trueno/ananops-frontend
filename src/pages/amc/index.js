@@ -42,6 +42,33 @@ class AmcRoute extends Component {
                         loading: Loading
                     })}
                 />
+                <Route
+                    exact
+                    path="/cbd/amc/report"
+                    component={Loadable({
+                        loader: () => import(
+                            './report/Index/index'),
+                        loading: Loading
+                    })}
+                />
+                <Route
+                    exact
+                    path="/cbd/amc/alarm/create/"
+                    component={Loadable({
+                        loader: () => import(
+                            './report/Create/index'),
+                        loading: Loading
+                    })}
+                />
+                <Route
+                    exact
+                    path="/cbd/amc/alarm/modify/:id"
+                    component={Loadable({
+                        loader: () => import(
+                            './report/Create/index'),
+                        loading: Loading
+                    })}
+                />
             </Switch>
         );
     }
